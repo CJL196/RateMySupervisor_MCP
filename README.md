@@ -2,6 +2,12 @@
 
 `RateMySupervisor_MCP` 是一个基于 FastMCP 构建的服务器，提供了一个接口，用于查询来自[导师评价网](https://www.urfire.com/)的导师评价数据。大语言模型（LLM）或其他兼容 MCP 协议的客户端可以通过此服务器轻松地获取导师、院系和评价信息。服务器内置了对导师姓名的智能模糊匹配功能，支持中文名与拼音的自动识别，并能通过详细的指令引导大模型进行高效、准确的查询。
 
+## demo
+
+![demo1](assets/demo1.gif)
+
+![demo2](assets/demo2.gif)
+
 ## 数据来源
 
 数据来源：[https://github.com/pengp25/RateMySupervisor](https://github.com/pengp25/RateMySupervisor)，这个仓库使用了爬虫工具从[导师推荐网](https://www.urfire.com/)获取导师评价数据，存储为`data/comments_data.json`。
