@@ -24,7 +24,7 @@
 
 1.  **克隆仓库**
     ```bash
-    git clone https://github.com/your-username/RateMySupervisor_MCP.git
+    git clone https://github.com/CJL196/RateMySupervisor_MCP.git
     cd RateMySupervisor_MCP
     ```
 
