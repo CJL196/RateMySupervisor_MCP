@@ -106,7 +106,7 @@
 根据大学名称，获取该大学所有的院系列表。
 
 -   **参数**:
-    -   `university` (string, required): 要查询的大学名称，支持模糊匹配。
+    -   `university` (string, required): 要查询的大学名称。
 -   **成功响应**:
     ```json
     {
@@ -131,8 +131,8 @@
 根据大学和院系名称，获取该院系所有的导师列表。
 
 -   **参数**:
-    -   `university` (string, required): 大学名称，支持模糊匹配。
-    -   `department` (string, required): 院系名称，支持模糊匹配。
+    -   `university` (string, required): 大学名称。
+    -   `department` (string, required): 院系名称。
 -   **成功响应**:
     ```json
     {
@@ -158,8 +158,8 @@
 根据大学、院系和导师的完整信息，获取具体评价。
 
 -   **参数**:
-    -   `university` (string, required): 大学名称，支持模糊匹配。
-    -   `department` (string, required): 院系名称，支持模糊匹配。
+    -   `university` (string, required): 大学名称。
+    -   `department` (string, required): 院系名称。
     -   `supervisor` (string, required): 导师姓名。支持智能模糊匹配（中文名和拼音）。
 -   **成功响应**:
     ```json
