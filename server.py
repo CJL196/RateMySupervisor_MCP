@@ -5,6 +5,40 @@ from pydantic import Field
 from typing import Annotated
 import sys
 import os
+import pinyin
+
+# Helper function to check for Chinese characters
+def _contains_chinese(text: str) -> bool:
+    """Checks if a string contains any Chinese characters."""
+    for char in text:
+        if '\u4e00' <= char <= '\u9fff':
+            return True
+    return False
+
+def _is_supervisor_match(query_name: str, supervisor_in_data: str) -> bool:
+    """
+    Checks if a query name matches a supervisor name from data.
+    Handles direct substring match and pinyin match for Chinese queries.
+    """
+    if not query_name or not supervisor_in_data:
+        return False
+        
+    query_lower = query_name.lower()
+    target_lower = supervisor_in_data.lower()
+
+    # 1. Direct substring match
+    if query_lower in target_lower:
+        return True
+
+    # 2. If query is Chinese, try pinyin match
+    if _contains_chinese(query_name):
+        # pinyin.get returns pinyin parts, e.g., 'he', 'kai', 'ming'
+        # This handles cases like "Kaiming He" vs "He Kaiming"
+        pinyin_parts = pinyin.get(query_name, format="strip", delimiter="-").split('-')
+        if all(part in target_lower for part in pinyin_parts):
+            return True
+    
+    return False
 
 # Construct path to data file relative to the script to ensure it's always found
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -55,12 +89,20 @@ def search_supervisor_by_name(
     根据导师姓名搜索相关的所有评价。
     为保证查询准确性，请提供导师的完整姓名。对于中国大陆院校的导师，请使用中文名；对于非中国大陆院校的导师，请使用其常用英文名（例如 'Kaiming He'）。
     """
-    results = [
-        clean_review(entry) for entry in all_data 
-        if name.lower() in entry.get('supervisor', '').lower()
-    ]
+    results = []
+    seen_entries = set()
+    for entry in all_data:
+        # Use frozenset of items to make the dict hashable for the 'seen' set
+        entry_tuple = frozenset(entry.items())
+        if entry_tuple in seen_entries:
+            continue
+            
+        if _is_supervisor_match(name, entry.get('supervisor', '')):
+            results.append(clean_review(entry))
+            seen_entries.add(entry_tuple)
+
     if not results:
-        return {"success": False, "message": f"没有找到名为 '{name}' 的导师。"}
+        return {"success": False, "message": f"没有找到与 '{name}' 相关的导师。"}
     
     return {"success": True, "data": results}
 
@@ -125,7 +167,7 @@ def get_reviews(
         clean_review(entry) for entry in all_data 
         if (university.lower() in entry.get('university', '').lower() and
             department.lower() in entry.get('department', '').lower() and
-            supervisor.lower() in entry.get('supervisor', '').lower())
+            _is_supervisor_match(supervisor, entry.get('supervisor', '')))
     ]
     
     if not results:

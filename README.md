@@ -1,6 +1,6 @@
 # RateMySupervisor_MCP
 
-`RateMySupervisor_MCP` 是一个基于 FastMCP 构建的服务器，提供了一个接口，用于查询来自[导师评价网](https://www.urfire.com/)的导师评价数据。大语言模型（LLM）或其他兼容 MCP 协议的客户端可以通过此服务器轻松地获取导师、院系和评价信息。
+`RateMySupervisor_MCP` 是一个基于 FastMCP 构建的服务器，提供了一个接口，用于查询来自[导师评价网](https://www.urfire.com/)的导师评价数据。大语言模型（LLM）或其他兼容 MCP 协议的客户端可以通过此服务器轻松地获取导师、院系和评价信息。服务器内置了对导师姓名的智能模糊匹配功能，支持中文名与拼音的自动识别，并能通过详细的指令引导大模型进行高效、准确的查询。
 
 ## 数据来源
 
@@ -29,7 +29,7 @@
     ```
 
 2.  **安装依赖**
-    项目依赖 `fastmcp` 和 `pydantic`。通过以下命令安装：
+    项目依赖 `fastmcp`, `pydantic` 和 `pinyin`。通过以下命令安装：
     ```bash
     pip install -r requirements.txt
     ```
@@ -71,6 +71,8 @@
 ### 1. `search_supervisor_by_name`
 
 根据导师姓名模糊搜索相关的评价。
+
+> **Note**: 此工具支持智能姓名匹配。当输入中文姓名（如"何凯明"）时，服务器会自动搜索其中文形式以及对应的拼音形式（如 "Kaiming He"），从而有效处理数据中导师姓名为英文或拼音的情况。
 
 -   **参数**:
     -   `name` (string, required): 要搜索的导师姓名。
@@ -158,7 +160,7 @@
 -   **参数**:
     -   `university` (string, required): 大学名称，支持模糊匹配。
     -   `department` (string, required): 院系名称，支持模糊匹配。
-    -   `supervisor` (string, required): 导师姓名，支持模糊匹配。
+    -   `supervisor` (string, required): 导师姓名。支持智能模糊匹配（中文名和拼音）。
 -   **成功响应**:
     ```json
     {
